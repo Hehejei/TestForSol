@@ -1,0 +1,67 @@
+﻿@model TestForSol.Models.Order
+@{
+    var orderItems = ViewBag.OrderItems;
+    ViewData["Title"] = @Model.Number;
+}
+
+<h1 class="text-center m-4 text-uppercase">О заказе</h1>
+
+<div class="card p-4">
+    <h3 class="text-center text-uppercase">Model.Id</h3>
+    <h4 class="text-center mb-4 text-uppercase">@Model.Id</h4>
+
+    <h3 class="text-center text-uppercase">Model.Number</h3>
+    <h4 class="text-center mb-4 text-uppercase">@Model.Number</h4>
+
+    <h3 class="text-center text-uppercase">Model.Date</h3>
+    <h4 class="text-center mb-4 text-uppercase">@Model.Date</h4>
+
+    <h3 class="text-center text-uppercase">Model.ProviderId</h3>
+    <h4 class="text-center mb-4 text-uppercase">@Model.ProviderId</h4>
+</div>
+
+<div class="card p-4 mt-4">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">OrderId</th>
+                <th scope="col">Name</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Unit</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var orderItem in orderItems)
+            {   
+                <tr>
+                    <th scope="row">@orderItem.Id</th>
+                    <td>@orderItem.OrderId</td>
+                    <td>@orderItem.Name</td>
+                    <td>@orderItem.Quantity</td>
+                    <td>@orderItem.Unit</td>
+                    <td>@Html.ActionLink("Удалить строку", "DeleteOrderItem", "OrderItem", new { id = orderItem.Id, orderId = Model.Id}, new { @class = "btn btn-danger" })</td>
+                </tr>     
+            }
+        </tbody>
+    </table>
+
+    @Html.ActionLink("Добавить строку заказа", "CreateOrderItem", "OrderItem", new { OrderId = Model.Id}, new { @class = "btn btn-success mb-4" })
+
+</div>
+
+<div class="row mt-4 text-center">
+    <div class="col-6">
+        @Html.ActionLink("Удалить заказ", "DeleteOrder", "Order", new { id = Model.Id }, new { @class = "btn btn-danger" })
+    </div>
+    <div class="col-6">
+        @Html.ActionLink("Обновить заказ", "UpdateOrder", "Order", new { id = Model.Id }, new { @class = "btn btn-success" })
+    </div>
+</div>
+
+<div class="row m-4 text-center">
+    <div class="col-12">
+         @Html.ActionLink("Назад", "Index", "Home", null)
+    </div>
+</div>

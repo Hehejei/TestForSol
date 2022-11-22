@@ -1,0 +1,48 @@
+﻿@model TestForSol.Models.Order
+
+@{
+    var Numbers = ViewBag.OrderNumbers;
+    var Providers = ViewBag.Providers;
+
+    var OneMonthAgo = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd");
+    var Today = DateTime.Now.ToString("yyyy-MM-dd");
+}
+
+<h1 class="display-4 m4">Фильтр</h1>
+
+<div class="card text-center p-2">
+    @using(Html.BeginForm("Index", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <div class="row">
+            <div class="col-6">
+                <div class="editor-label">Numbers</div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.Number, Numbers as SelectList, new {@class = "form-control chosen-select", @multiple = true, @style="max-width:200px;"})
+                    @Html.ValidationMessageFor(model => model.Number)
+                </div>
+            </div>
+
+             <div class="col-6">
+                <div class="editor-label">Providers</div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.ProviderId, Providers as SelectList, new {@class = "form-control chosen-select", @multiple = true, @style="max-width:200px;"})
+                    @Html.ValidationMessageFor(model => model.ProviderId)
+                </div>
+            </div>
+        </div>
+        <div class="row m-4">
+            <div class="col-6">
+                <div class="editor-label">StartDate</div>
+                <input type="date" name="StartDate" value="@OneMonthAgo"/>
+            </div>
+
+            <div class="col-6">
+                <div class="editor-label">EndDate</div>
+                <input type="date" name="EndDate" value="@Today"/>
+             </div>
+        </div>
+
+        <input type="submit" value="Применить фильтрацию" class="btn btn-primary"/>
+    }
+
+</div>

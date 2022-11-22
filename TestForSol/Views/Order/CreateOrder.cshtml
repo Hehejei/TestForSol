@@ -1,0 +1,44 @@
+﻿@model TestForSol.Models.Order
+
+@{
+    var providers = ViewBag.Providers;
+    ViewData["Title"] = "Create Order";
+}
+
+<div class="container text-center text-uppercase">
+    <div class="card p-4" style="max-width: 430px; margin: 20px auto;">
+        @using (Html.BeginForm("CreateOrder", "Order", FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            @Html.ValidationSummary(true)
+            <fieldset>
+                <legend>Создать заказ</legend>
+ 
+                <div class="editor-label">Number</div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Number)
+                    @Html.ValidationMessageFor(model => model.Number)
+                </div>
+
+                <div class="editor-label">Date</div>
+                <div class="editor-field">
+                    @Html.EditorFor(model => model.Date)
+                    @Html.ValidationMessageFor(model => model.Date)
+                </div>
+
+                <div class="editor-label">ProviderId</div>
+                <div class="editor-field">
+                    @Html.DropDownListFor(model => model.ProviderId, providers as SelectList)
+                    @Html.ValidationMessageFor(model => model.ProviderId)
+                </div>
+ 
+                <p class="pt-4">
+                    <input type="submit" value="Создать"  class="btn btn-primary"/>
+                </p>
+            </fieldset>
+        }
+    </div>
+
+    <div>
+        @Html.ActionLink("Назад", "Index", "Home", null)
+    </div>
+</div>

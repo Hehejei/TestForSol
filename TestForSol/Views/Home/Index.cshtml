@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewData["Title"] = "Заказы";
+}
+
+<div class="text-center">
+
+    <partial name="_Filter" />
+
+    <partial name="_OrdersTable" />
+
+    <a class="btn btn-success" asp-area="" asp-controller="Order" asp-action="CreateOrder">Добавить заказ</a>
+</div>

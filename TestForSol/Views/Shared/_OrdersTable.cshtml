@@ -1,0 +1,31 @@
+﻿@model TestForSol.Models.Order
+
+@{
+    var Orders = ViewBag.Orders;
+}
+
+<h1 class="display-4 mt-4">Заказы</h1>
+
+<div class="card mb-4 p-2">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Number</th>
+                <th scope="col">Date</th>
+                <th scope="col">ProviderId</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Orders)
+            {   
+                <tr onclick="document.location = 'AboutOrder/@order.Id';">
+                    <th scope="row">@order.Id</th>
+                    <td>@order.Number</td>
+                    <td>@order.Date</td>
+                    <td>@order.ProviderId</td>
+                </tr>     
+            }
+        </tbody>
+    </table>
+</div>
