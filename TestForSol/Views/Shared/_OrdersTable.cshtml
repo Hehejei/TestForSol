@@ -1,4 +1,4 @@
-﻿@model TestForSol.Models.Order
+﻿@model TestForSol.ViewModels.OrderViewModel
 
 @{
     var Orders = ViewBag.Orders;
@@ -23,7 +23,7 @@
                     <th scope="row">@order.Id</th>
                     <td>@order.Number</td>
                     <td>@order.Date</td>
-                    <td>@order.ProviderId</td>
+                    <td>@order.ProviderName</td>
                 </tr>     
             }
         </tbody>

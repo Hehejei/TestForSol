@@ -2,12 +2,13 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TestForSol.Models;
+using TestForSol.ViewModels;
 
 namespace TestForSol.Services
 {
     public interface IOrderService
     {
-        public IEnumerable<Order> GetOrders();
+        public IEnumerable<OrderViewModel> GetOrders();
         public Order GetOrder(int id);
         public IEnumerable<Order> GetRecurringOrder(string number, int providerId);
         public IEnumerable<OrderItem> GetOrderItems(int id);
@@ -27,9 +28,22 @@ namespace TestForSol.Services
         {
             DbContext = dbContext;
         }
-     
-        public IEnumerable<Order> GetOrders()
-            => DbContext.Orders;
+
+        public IEnumerable<OrderViewModel> GetOrders()
+        {
+            var orders = DbContext.Orders.Join(DbContext.Providers,
+               u => u.ProviderId,
+               c => c.Id,
+               (u, c) => new OrderViewModel
+               {
+                   Id = u.Id,
+                   Number = u.Number,
+                   Date = u.Date,
+                   ProviderName = c.Name
+               });
+
+            return orders;
+        }
 
         public Order GetOrder(int id) 
             => DbContext.Orders.FirstOrDefault(o => o.Id == id); 
@@ -39,6 +53,7 @@ namespace TestForSol.Services
 
         public IEnumerable<OrderItem> GetOrderItems(int id) 
             => DbContext.OrderItems.AsNoTracking().Where(o => o.OrderId == id);
+
         public SelectList OrderNumbersList()
         {
             var Orders = DbContext.Orders.Select(o => o.Number).Distinct().Select(n => new { Number = n}).ToList();
