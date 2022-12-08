@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 using TestForSol.Models;
 using TestForSol.Services;
+using TestForSol.ViewModels;
 
 namespace TestForSol.Controllers
 {
@@ -17,13 +19,19 @@ namespace TestForSol.Controllers
             _filterService = filterService;
         }
 
-        public IActionResult Index(string[]? Number, int[]? ProviderId, DateTime? StartDate, DateTime? EndDate)
+        public IActionResult Index(FilterViewModel? filter)
         {
-
-            ViewBag.Orders = _orderService.GetOrders();
+            if (filter.StartDate != null || filter.EndDate != null || !filter.Number.IsNullOrEmpty() || !filter.ProviderName.IsNullOrEmpty())
+            {
+                ViewBag.Orders = _filterService.Filter(filter);
+            }
+            else
+            {
+                ViewBag.Orders = _orderService.GetOrders();
+            }
 
             ViewBag.OrderNumbers = _orderService.OrderNumbersList();
-            ViewBag.Providers = _orderService.ProvidersList();
+            ViewBag.Providers = _orderService.ProvidersListName();
 
             return View();
         }

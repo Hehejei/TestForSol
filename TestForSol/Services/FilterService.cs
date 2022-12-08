@@ -1,86 +1,76 @@
-﻿using TestForSol.Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using TestForSol.Models;
+using TestForSol.ViewModels;
 
 namespace TestForSol.Services
 {
     public interface IFilterService
     {
-        //public IEnumerable<Order> GetOrder5(string[]? numbers);
-        //public IEnumerable<Order> GetOrder4(string[]? numbers, DateTime StartDate, DateTime EndDate);
-        //public IEnumerable<Order> GetOrder3(int[]? ProviderId, DateTime StartDate, DateTime EndDate);
-        //public IEnumerable<Order> GetOrder2(string[]? numbers, int[]? ProviderId, DateTime? StartDate, DateTime? EndDate);
+        public IEnumerable<OrderViewModel> Filter(FilterViewModel filter);
     }
 
     public class FilterService : IFilterService
     {
         private readonly DbCntx DbContext;
+
         public FilterService(DbCntx dbContext)
         {
             DbContext = dbContext;
         }
 
-        //public IEnumerable<Order> GetOrder5(string?[] numbers)
-        //{
-        //    List<Order> orders = new List<Order>();
+        public IEnumerable<OrderViewModel> Filter(FilterViewModel filter)
+        {
+            var orders = DbContext.Orders.Join(DbContext.Providers,
+                o => o.ProviderId,
+                p => p.Id,
+                (o, p) => new OrderViewModel
+                {
+                    Id = o.Id,
+                    Number = o.Number,
+                    Date = o.Date,
+                    ProviderName = p.Name
+                }).ToList();
 
-        //    foreach (var number in numbers)
-        //    {
-        //        var order = DbContext.Orders.FirstOrDefault(o => o.Number == number);
-        //        if (order != null)
-        //        {
-        //            orders.Add(new Order { Id = order.Id, Number = order.Number, Date = order.Date, ProviderId = order.ProviderId });
-        //        }
-        //    }
-        //    return orders;
-        //}
+            if (filter.StartDate != null && filter.EndDate != null)
+            {
+               orders = orders.Where(o => o.Date >= filter.StartDate && o.Date <= filter.EndDate).ToList();    
+            }
 
-        //public IEnumerable<Order> GetOrder4(string[]? numbers, DateTime StartDate, DateTime EndDate)
-        //{
-        //    List<Order> orders = new List<Order>();
+            if (!filter.Number.IsNullOrEmpty())
+            {
+                var result = new List<OrderViewModel>();
 
-        //    foreach (var number in numbers)
-        //    {
-        //        var order = DbContext.Orders.FirstOrDefault(o => o.Number == number && o.Date >= StartDate && o.Date <= EndDate);
-        //        if (order != null)
-        //        {
-        //            orders.Add(new Order { Id = order.Id, Number = order.Number, Date = order.Date, ProviderId = order.ProviderId });
-        //        }
-        //    }
-        //    return orders;
-        //}
+                for(int i = 0;  i < filter.Number.Length; i++)
+                {
+                    foreach (var order in orders)
+                    {
+                        if (order.Number == filter.Number[i])
+                        {
+                            result.Add(new OrderViewModel { Id = order.Id, Number = order.Number, Date = order.Date, ProviderName = order.ProviderName });
+                        }
+                    }
+                }
+                orders = result;
+            }
 
-        //public IEnumerable<Order> GetOrder3(int[]? ProviderId, DateTime? StartDate, DateTime? EndDate)
-        //{
-        //    List<Order> orders = new List<Order>();
+            if (!filter.ProviderName.IsNullOrEmpty())
+            {
+                var result = new List<OrderViewModel>();
 
-        //    foreach (var provider in ProviderId)
-        //    {
-        //        var order = DbContext.Orders.FirstOrDefault(o => o.ProviderId == provider && o.Date >= StartDate && o.Date <= EndDate);
-        //        if (order != null)
-        //        {
-        //            orders.Add(new Order { Id = order.Id, Number = order.Number, Date = order.Date, ProviderId = order.ProviderId });
-        //        }
-        //    }
-        //    return orders;
-        //}
+                for (int i = 0; i < filter.ProviderName.Length; i++)
+                {
+                    foreach (var order in orders)
+                    {
+                        if (order.ProviderName == filter.ProviderName[i])
+                        {
+                            result.Add(new OrderViewModel { Id = order.Id, Number = order.Number, Date = order.Date, ProviderName = order.ProviderName });
+                        }
+                    }
+                }
+                orders = result;
+            }
 
-        //public IEnumerable<Order> GetOrder2(string[]? numbers, int[]? ProviderId, DateTime? StartDate, DateTime? EndDate)
-        //{
-        //    List<Order> orders = new List<Order>();
-
-        //    foreach (var number in numbers)
-        //    {
-        //        foreach (var provider in ProviderId)
-        //        { 
-        //            var order = DbContext.Orders.Where(o => o.Number == number && o.ProviderId == provider && o.Date >= StartDate && o.Date <= EndDate);
-        //            if (order != null)
-        //            {
-        //                orders.InsertRange(provider, order);
-        //                    /*.Add(new Order { Id = order.Id, Number = order.Number, Date = order.Date, ProviderId = order.ProviderId });*/
-        //            }
-        //        }
-                
-        //    }
-        //    return orders;
-        //}
+            return orders; 
+        }
     }
 }

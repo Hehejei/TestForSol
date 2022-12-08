@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using TestForSol.Models;
 using TestForSol.ViewModels;
 
@@ -14,6 +13,7 @@ namespace TestForSol.Services
         public IEnumerable<OrderItem> GetOrderItems(int id);
         public SelectList OrderNumbersList();
         public SelectList ProvidersList();
+        public SelectList ProvidersListName();
         public void CreateOrder(Order order);
         public void UpdateOrder(Order order);
         public void DeleteOrder(int id);
@@ -32,15 +32,15 @@ namespace TestForSol.Services
         public IEnumerable<OrderViewModel> GetOrders()
         {
             var orders = DbContext.Orders.Join(DbContext.Providers,
-               u => u.ProviderId,
-               c => c.Id,
-               (u, c) => new OrderViewModel
-               {
-                   Id = u.Id,
-                   Number = u.Number,
-                   Date = u.Date,
-                   ProviderName = c.Name
-               });
+                o => o.ProviderId,
+                p => p.Id,
+                (o, p) => new OrderViewModel
+                {
+                    Id = o.Id,
+                    Number = o.Number,
+                    Date = o.Date,
+                    ProviderName = p.Name
+                });
 
             return orders;
         }
@@ -62,7 +62,10 @@ namespace TestForSol.Services
 
         public SelectList ProvidersList()
             => new SelectList(DbContext.Providers, "Id", "Name");
-        
+
+        public SelectList ProvidersListName()
+           => new SelectList(DbContext.Providers, "Name", "Name");
+
         public void CreateOrder(Order order)
         {
             DbContext.Orders.Add(order);

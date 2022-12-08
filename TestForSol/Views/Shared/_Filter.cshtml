@@ -1,4 +1,4 @@
-﻿@model TestForSol.Models.Order
+﻿@model TestForSol.ViewModels.OrderViewModel
 
 @{
     var Numbers = ViewBag.OrderNumbers;
@@ -25,8 +25,8 @@
              <div class="col-6">
                 <div class="editor-label">Providers</div>
                 <div class="editor-field">
-                    @Html.DropDownListFor(model => model.ProviderId, Providers as SelectList, new {@class = "form-control chosen-select", @multiple = true, @style="max-width:200px;"})
-                    @Html.ValidationMessageFor(model => model.ProviderId)
+                    @Html.DropDownListFor(model => model.ProviderName, Providers as SelectList, new {@class = "form-control chosen-select", @multiple = true, @style="max-width:200px;"})
+                    @Html.ValidationMessageFor(model => model.ProviderName)
                 </div>
             </div>
         </div>
